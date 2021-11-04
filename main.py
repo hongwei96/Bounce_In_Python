@@ -7,7 +7,7 @@ from State_Level import State_Level
 
 # Global Constants
 FPS = 60
-WIN_DIMENSION = (960,640) # Grid = 15 x 10, 64px
+WIN_DIMENSION = (960, 640) # Grid = 15 x 10, 64px
 
 # Game Global
 WIN = pygame.display.set_mode(WIN_DIMENSION)
@@ -17,7 +17,7 @@ pygame.display.set_caption("Bounce Classic")
 
 # Global Var
 rm = ResourceManager()
-sm = StateManager(rm, WIN, WIN_DIMENSION)
+sm = StateManager(rm, WIN)
 
 def InitializeResources():
     rm.AddTexture(Texture2D("Ball", "Assets\\Ball.png"))
@@ -29,7 +29,7 @@ def InitializeResources():
     rm.AddTexture(Texture2D("Ring", "Assets\\Ring.png"))
     rm.AddTexture(Texture2D("Slope", "Assets\\Slope.png"))
     rm.AddTexture(Texture2D("Spike", "Assets\\Spike.png"))
-    rm.PrettyPrint()
+    #rm.PrettyPrint()
 
 def InitializeStates():
     sm.AddState(State_Level)

@@ -1,9 +1,8 @@
 from Engine.DebugLog import Debug
 
 class StateManager:
-    def __init__(self, resourcemanager, window, dimension):
+    def __init__(self, resourcemanager, window):
         self.window = window
-        self.dimension = dimension
         self.resourcemanager = resourcemanager
         self.newState = "None"
         self.currentState = "None"

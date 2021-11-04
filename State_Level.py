@@ -12,10 +12,10 @@ class State_Level(BaseState):
         self.backgroundColor = (137, 207, 240)
 
         self.cameraPos = Vector2()
-        Debug.Log(self.cameraPos)
+        self.level = 1
         self.isOnGround = False
         self.playerPos = Vector2()
-        self.playerFallingSpeed = 0.0
+        self.playerVel = Vector2()
         self.map = []
     
     def __drawMap(self):
@@ -31,26 +31,38 @@ class State_Level(BaseState):
     def __handleCollision(self):
         pass
 
-    def __handleGravity(self, dt: float):
+    def __handlePhysics(self, dt: float):
+        # Gravity
         if not self.isOnGround:
-            self.playerFallingSpeed += 9.8 * dt
+            self.playerVel.y += 9.8 * dt * 2
             # Terminal velocity
-            if self.playerFallingSpeed > 33.0:
-                self.playerFallingSpeed = 33.0
-            self.playerPos.y += self.playerFallingSpeed * 100.0 * dt # assume 100px = 1metre
+            if self.playerVel.y > 33.0:
+                self.playerVel.y = 33.0
         else:
-            self.playerFallingSpeed = 0.0
+            self.playerVel.y = 0.0
+
+        # Friction
+        if self.playerVel.x > 0.3:
+            self.playerVel.x -= 0.2
+        elif self.playerVel.x < -0.3:
+            self.playerVel.x += 0.2
+        else:
+            self.playerVel.x = 0.0
+
+        self.playerPos += self.playerVel * 64.0 * dt # assume 64px = 1metre
 
     def __handleKeyInput(self):
         keypress = pygame.key.get_pressed()
-        if keypress[K_UP]:
-            self.playerPos.y -= 1
-        elif keypress[K_DOWN]:
-            self.playerPos.y += 1
+        if keypress[K_UP] and self.isOnGround:
+            self.playerVel.y = -7.5
+        #elif keypress[K_DOWN]:
+        #    self.playerVel.y = 5
         if keypress[K_LEFT]:
-            self.playerPos.x -= 1
+            if self.playerVel.x > -3:
+                self.playerVel.x -= 1
         elif keypress[K_RIGHT]:
-            self.playerPos.x += 1
+            if self.playerVel.x < 3:
+                self.playerVel.x += 1
 
     def Load(self):
         super().Load()
@@ -58,7 +70,7 @@ class State_Level(BaseState):
     def Update(self, dt):
         self.__handleKeyInput()
         self.__handleCollision()
-        self.__handleGravity(dt)
+        self.__handlePhysics(dt)
 
         self.__drawMap()
         super().AddDrawCall("Ball", self.playerPos)
