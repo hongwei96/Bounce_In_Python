@@ -22,6 +22,10 @@ class Vector2:
     def Length(self):
         return math.sqrt(self.x ** 2 + self.y ** 2)
 
+    def SetZero(self):
+        self.x = 0.0
+        self.y = 0.0
+
     def __str__(self):
         return "({}, {})".format(self.x, self.y)
             
