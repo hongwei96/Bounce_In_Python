@@ -1,5 +1,7 @@
 import pygame
 from Engine.StateManager import StateManager
+from Engine.ResourceManager import ResourceManager
+from Engine.Resources import Texture2D
 from State_Level1 import State_Level1
 
 # Global Constants
@@ -13,7 +15,20 @@ WIN = pygame.display.set_mode(WIN_DIMENSION)
 pygame.display.set_caption("Bounce Classic")
 
 # Global Var
-sm = StateManager(WIN, WIN_DIMENSION)
+rm = ResourceManager()
+sm = StateManager(rm, WIN, WIN_DIMENSION)
+
+def InitializeResources():
+    rm.AddTexture(Texture2D("Ball", "Assets\\Ball.png"))
+    rm.AddTexture(Texture2D("Brick", "Assets\\Brick.png"))
+    rm.AddTexture(Texture2D("Checkpoint_Active", "Assets\\Checkpoint_Active.png"))
+    rm.AddTexture(Texture2D("Checkpoint_NotActive", "Assets\\Checkpoint_NotActive.png"))
+    rm.AddTexture(Texture2D("Startpoint", "Assets\\Startpoint.png"))
+    rm.AddTexture(Texture2D("Endpoint", "Assets\\Endpoint.png"))
+    rm.AddTexture(Texture2D("Ring", "Assets\\Ring.png"))
+    rm.AddTexture(Texture2D("Slope", "Assets\\Slope.png"))
+    rm.AddTexture(Texture2D("Spike", "Assets\\Spike.png"))
+    rm.PrettyPrint()
 
 def InitializeStates():
     sm.AddState(State_Level1)
@@ -21,7 +36,7 @@ def InitializeStates():
 
 # Game Loop
 def main():
-
+    InitializeResources()
     InitializeStates()
     pygame.init()
     clock = pygame.time.Clock()

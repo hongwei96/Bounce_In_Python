@@ -1,18 +1,20 @@
 from Engine.DebugLog import Debug
 
 class StateManager:
-    def __init__(self, window, dimension):
+    def __init__(self, resourcemanager, window, dimension):
         self.window = window
         self.dimension = dimension
+        self.resourcemanager = resourcemanager
         self.newState = "None"
         self.currentState = "None"
         self.states = {}
 
+    # state: type
     def AddState(self, state):
         if state.statename in self.states:
             Debug.Warn(f'State \"{state.statename}\" already exist')
         else:
-            self.states[state.statename] = state(self.window)
+            self.states[state.statename] = state(self.resourcemanager, self.window)
 
     def RemoveState(self, state):
         if state.statename in self.states:
