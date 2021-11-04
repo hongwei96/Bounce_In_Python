@@ -7,6 +7,11 @@ class Vector2:
         self.x = x
         self.y = y
     
+    # inheritable alternative constructors
+    @classmethod
+    def fromTuple(cls, tuple):
+        return cls(tuple[0],tuple[1])
+
     def Normalize(self):
         len = self.Length()
         self.x = self.x / len
@@ -26,6 +31,13 @@ class Vector2:
         self.x = 0.0
         self.y = 0.0
 
+    @staticmethod
+    def Zero():
+        return Vector2(0, 0)
+    def One():
+        return Vector2(1, 1)
+
+    # Magic method / Special method
     def __str__(self):
         return "({}, {})".format(self.x, self.y)
             
