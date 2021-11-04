@@ -3,11 +3,11 @@ from Engine.DebugLog import Debug
 from Engine.StateManager import StateManager
 from Engine.ResourceManager import ResourceManager
 from Engine.Resources import Texture2D
-from State_Level1 import State_Level1
+from State_Level import State_Level
 
 # Global Constants
 FPS = 60
-WIN_DIMENSION = (1280,720)
+WIN_DIMENSION = (960,640) # Grid = 15 x 10, 64px
 
 # Game Global
 WIN = pygame.display.set_mode(WIN_DIMENSION)
@@ -32,15 +32,16 @@ def InitializeResources():
     rm.PrettyPrint()
 
 def InitializeStates():
-    sm.AddState(State_Level1)
-    sm.ChangeState(State_Level1.statename)
+    sm.AddState(State_Level)
+    sm.ChangeState(State_Level.statename)
 
-def LogFPS(getTicksLastFrame = [0]):
+def GetDeltaTime(getTicksLastFrame = [0]):
     t = pygame.time.get_ticks()
     # deltaTime in seconds.
     deltaTime = (t - getTicksLastFrame[0]) / 1000.0
     getTicksLastFrame[0] = t
-    Debug.Log(deltaTime)
+    return deltaTime
+    #Debug.Log(deltaTime)
 
 # Game Loop
 def main():
@@ -61,7 +62,7 @@ def main():
                 run = False
 
         # State Update
-        sm.UpdateState()
+        sm.UpdateState(GetDeltaTime())
 
         if sm.IsStateChanged():
             sm.UnloadCurrentState()

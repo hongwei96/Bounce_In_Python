@@ -24,7 +24,7 @@ class BaseState:
     def Unload(self):
         Debug.Log(f'Unloading... {self.name}')
 
-    def Update(self):
+    def Update(self, dt):
         pass
 
     def AddDrawCall(self, texName, position = Vector2(), rotation = 0, scale = Vector2()):
