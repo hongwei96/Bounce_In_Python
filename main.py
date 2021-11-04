@@ -1,4 +1,5 @@
 import pygame
+from Engine.DebugLog import Debug
 from Engine.StateManager import StateManager
 from Engine.ResourceManager import ResourceManager
 from Engine.Resources import Texture2D
@@ -34,13 +35,19 @@ def InitializeStates():
     sm.AddState(State_Level1)
     sm.ChangeState(State_Level1.statename)
 
+def LogFPS(getTicksLastFrame = [0]):
+    t = pygame.time.get_ticks()
+    # deltaTime in seconds.
+    deltaTime = (t - getTicksLastFrame[0]) / 1000.0
+    getTicksLastFrame[0] = t
+    Debug.Log(deltaTime)
+
 # Game Loop
 def main():
     InitializeResources()
     InitializeStates()
     pygame.init()
     clock = pygame.time.Clock()
-    
     run = True
     while run:
         if sm.IsStateChanged():
