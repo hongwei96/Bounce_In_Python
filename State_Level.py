@@ -3,6 +3,7 @@ from Engine.BaseState import BaseState
 from Engine.DebugLog import Debug
 from Engine.Vector2 import Vector2
 import pygame
+import os
 
 class State_Level(BaseState):
     statename = "Level 1"
@@ -19,14 +20,19 @@ class State_Level(BaseState):
         self.map = []
     
     def __drawMap(self):
-        for i in range (15):
-            super().AddDrawCall("Brick", Vector2(i * 64, 0))
-        for i in range (10):
-            super().AddDrawCall("Brick", Vector2(0, i * 64))
-        for i in range (15):
-            super().AddDrawCall("Brick", Vector2(i * 64, 640-64))
-        for i in range (10):
-            super().AddDrawCall("Brick", Vector2(960-64, i * 64))
+        Tiles = ["-", "Brick", "Slope", "Ring", "Spike", "Startpoint", "Endpoint",
+                 "Checkpoint_Active", "Checkpoint_NotActive"]
+        with open(os.path.join("Assets", "Level", f'Level{self.level}.dat'), "r") as f:
+            y = 0
+            for line in f:
+                list = line.split(',')
+                x = 0
+                for index in list:
+                    value = int(index, 10)
+                    if value != 0:
+                        super().AddDrawCall(Tiles[value], Vector2(x * 64, y * 64))
+                    x += 1
+                y += 1
 
     def __handleCollision(self):
         pass
