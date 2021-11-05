@@ -1,5 +1,6 @@
 from Engine.DebugLog import Debug
 from Engine.Vector2 import Vector2
+from Engine.Line2 import Line2
 import pygame
 
 class Entity:
@@ -9,12 +10,12 @@ class Entity:
         self.rotation = rotation
         self.scale = scale
 
-
 class BaseState:
     def __init__(self, rm, win, name):
         self.rm = rm # Resource Manager 
         self.backgroundColor = (255,255,255)
         self.renderList = []
+        self.debuglines = []
         self.window = win
         self.name = name
 
@@ -29,6 +30,9 @@ class BaseState:
 
     def AddDrawCall(self, texName, position = Vector2(), rotation = 0, scale = Vector2()):
         self.renderList.append(Entity(texName, position, rotation, scale))
+    
+    def AddDrawDebugLineCall(self, line):
+        self.debuglines.append(line)
 
     def Draw(self):
         # Background
@@ -40,6 +44,9 @@ class BaseState:
                 self.window.blit(texture.tex, (entity.position.x, entity.position.y))
             else:
                 Debug.Error(f'{entity.name} is not loaded...')
+        # Draw all debug
+        for line in self.debuglines:
+            pygame.draw.line(self.window, (0,255,0), line.start, line.end, 2)
         # Refresh
         pygame.display.update()
         self.renderList.clear()

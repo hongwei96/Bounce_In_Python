@@ -1,6 +1,7 @@
 from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_UP
 from Engine.BaseState import BaseState
 from Engine.DebugLog import Debug
+from Engine.Line2 import Line2
 from Engine.Vector2 import Vector2
 import pygame
 import os
@@ -36,6 +37,9 @@ class State_Level(BaseState):
 
     def __handleCollision(self):
         pass
+
+    def __drawDebug(self):
+        self.AddDrawDebugLineCall(Line2.from2Points((0,0), (10,10)))
 
     def __handlePhysics(self, dt: float):
         # Gravity
@@ -80,6 +84,7 @@ class State_Level(BaseState):
 
         self.__drawMap()
         super().AddDrawCall("Ball", self.playerPos)
+        self.__drawDebug()
 
         super().Update(dt)
         super().Draw()
