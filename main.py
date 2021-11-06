@@ -57,12 +57,13 @@ def main():
         clock.tick(FPS)
 
         # Events
-        for event in pygame.event.get():
+        eventList = pygame.event.get()
+        for event in eventList:
             if event.type == pygame.QUIT:
                 run = False
 
         # State Update
-        sm.UpdateState(GetDeltaTime())
+        sm.UpdateState(eventList, GetDeltaTime())
 
         if sm.IsStateChanged():
             sm.UnloadCurrentState()

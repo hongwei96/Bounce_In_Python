@@ -57,4 +57,7 @@ class Vector2:
         return Vector2(x, y)
 
     def __eq__(self, other):
-        return (self.x == other.x and self.y == other.y)
+        if other != None:
+            return (self.x == other.x and self.y == other.y)
+        else:
+            return False

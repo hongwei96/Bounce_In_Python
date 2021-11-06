@@ -31,9 +31,10 @@ class StateManager:
             self.states[self.newState].Load()
             self.currentState = self.newState
 
-    def UpdateState(self, dt):
+    def UpdateState(self, eventlist, dt):
         state = self.states.get(self.currentState)
         if state:
+            state.eventlist = eventlist
             state.Update(dt)
         else:
             Debug.Warn(f'{self.currentState} does not exist')

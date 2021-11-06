@@ -1,7 +1,8 @@
-from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_UP
+from pygame import event
+from pygame.constants import K_DOWN, K_F1, K_LEFT, K_RIGHT, K_UP
 from Engine.BaseState import BaseState
+from Engine.LevelMap import LevelMap
 from Engine.DebugLog import Debug
-from Engine.Line2 import Line2
 from Engine.Vector2 import Vector2
 import pygame
 import os
@@ -13,33 +14,35 @@ class State_Level(BaseState):
         super().__init__(resourcemanager, window, State_Level.statename)
         self.backgroundColor = (137, 207, 240)
 
+        self.showDebug = False
         self.cameraPos = Vector2()
         self.level = 1
         self.isOnGround = False
         self.playerPos = Vector2()
         self.playerVel = Vector2()
-        self.map = []
-    
+
+        self.levelMap = LevelMap(64) # GridSize = 64x64
+            
     def __drawMap(self):
-        Tiles = ["-", "Brick", "Slope", "Ring", "Spike", "Startpoint", "Endpoint",
-                 "Checkpoint_Active", "Checkpoint_NotActive"]
-        with open(os.path.join("Assets", "Level", f'Level{self.level}.dat'), "r") as f:
-            y = 0
-            for line in f:
-                list = line.split(',')
-                x = 0
-                for index in list:
-                    value = int(index, 10)
-                    if value != 0:
-                        super().AddDrawCall(Tiles[value], Vector2(x * 64, y * 64))
-                    x += 1
-                y += 1
+        Tiles = LevelMap.Tiles
+        dimension = self.levelMap.mapDim
+        map = self.levelMap.map
+        for x in range(dimension[0]):
+            for y in range(dimension[1]):
+                value = map[y * dimension[0] + x]
+                if value != 0:
+                    self.AddDrawCall(Tiles[value], Vector2(x * 64, y * 64))
+
+    def __drawColliders(self):
+        YELLOW_COLOR = (255,255,0)
+        GREEN_COLOR = (0,255,0)
+        for col in self.levelMap.colliders:
+            self.AddDrawDebugRectCall(col.position, col.size, GREEN_COLOR)
+        for trig in self.levelMap.triggers:
+            self.AddDrawDebugRectCall(trig.position, trig.size, YELLOW_COLOR)
 
     def __handleCollision(self):
         pass
-
-    def __drawDebug(self):
-        self.AddDrawDebugLineCall(Line2.from2Points((0,0), (10,10)))
 
     def __handlePhysics(self, dt: float):
         # Gravity
@@ -59,14 +62,22 @@ class State_Level(BaseState):
         else:
             self.playerVel.x = 0.0
 
-        self.playerPos += self.playerVel * 64.0 * dt # assume 64px = 1metre
+        #self.playerPos += self.playerVel * 64.0 * dt # assume 64px = 1metre
 
     def __handleKeyInput(self):
-        keypress = pygame.key.get_pressed()
-        if keypress[K_UP] and self.isOnGround:
-            self.playerVel.y = -7.5
+        # Trigger once
+        # Toggle Debug
+        for env in self.eventlist:
+            if env.type == pygame.KEYDOWN:            
+                if env.key == K_F1:
+                    self.showDebug = not self.showDebug
+                if env.key == K_UP and self.isOnGround:
+                    self.playerVel.y = -7.5
         #elif keypress[K_DOWN]:
         #    self.playerVel.y = 5
+
+        # Repeated call
+        keypress = pygame.key.get_pressed()
         if keypress[K_LEFT]:
             if self.playerVel.x > -3:
                 self.playerVel.x -= 1
@@ -76,6 +87,9 @@ class State_Level(BaseState):
 
     def Load(self):
         super().Load()
+        self.levelMap.LoadMap(os.path.join("Assets", "Level", f'Level{self.level}.dat'))
+        self.levelMap.GenerateColliders()
+        self.playerPos = self.levelMap.GetStartPoint_ScreenPos() - Vector2(0,64)
 
     def Update(self, dt):
         self.__handleKeyInput()
@@ -84,7 +98,8 @@ class State_Level(BaseState):
 
         self.__drawMap()
         super().AddDrawCall("Ball", self.playerPos)
-        self.__drawDebug()
+        if self.showDebug:
+            self.__drawColliders()
 
         super().Update(dt)
         super().Draw()
