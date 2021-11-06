@@ -22,6 +22,9 @@ class LevelMap:
         self.startpoint = Vector2()
         self.endpoint = Vector2()
 
+    def GetStartPoint_ScreenPos(self):
+        return self.startpoint * 64
+
     def LoadMap(self, path):
         with open(path, "r") as f:
             x, y = 0, 0
@@ -89,5 +92,22 @@ class LevelMap:
                                                 Vector2(x,y) * self.gridsize, 
                                                 Vector2(self.gridsize, self.gridsize)))
     
-    def GetStartPoint_ScreenPos(self):
-        return self.startpoint * 64
+    def __CheckIfSurroundingIsEmpty(self, gridpos):
+        # gridpos is in solid area
+        if self.map[gridpos.y * self.mapDim[0] + gridpos.x] != 0:
+            return False
+        # if not, check the surrounding area
+        for j in range(-1,2):
+            for i in range(-1,2):
+                value = self.map[(gridpos.y + j) * self.mapDim[0] + (gridpos.x + i)]
+                if value != 0:
+                    return False
+        
+        return True
+
+    def CheckCollision(self, pos, radius):
+        gridpos = Vector2(int(round(pos.x/self.gridsize)), int(round(pos.y/self.gridsize)))
+        pass
+
+    def CheckTrigger(self, pos, radius):
+        pass
