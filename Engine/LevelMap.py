@@ -107,7 +107,10 @@ class LevelMap:
 
     def CheckCollision(self, pos, radius):
         gridpos = Vector2(int(round(pos.x/self.gridsize)), int(round(pos.y/self.gridsize)))
-        pass
+        if self.__CheckIfSurroundingIsEmpty(gridpos):
+            return False
 
     def CheckTrigger(self, pos, radius):
-        pass
+        gridpos = Vector2(int(round(pos.x/self.gridsize)), int(round(pos.y/self.gridsize)))
+        if self.__CheckIfSurroundingIsEmpty(gridpos):
+            return False
