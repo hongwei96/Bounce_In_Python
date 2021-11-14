@@ -17,6 +17,7 @@ class BaseState:
         self.renderList = []
         self.debuglines = []
         self.debugrects = []
+        self.debugcircles = []
         self.window = win
         self.name = name
         self.eventlist =[]
@@ -39,6 +40,12 @@ class BaseState:
     def AddDrawDebugRectCall(self, topleft, dim, color):
         self.debugrects.append((topleft, dim, color))
 
+    def AddDrawDebugCircleCall(self, point, radius, color):
+        self.debugcircles.append((point, radius, color))
+
+    def AddDrawDebugPointCall(self, point, color):
+        self.debugcircles.append((point, 2, color))
+
     def Draw(self):
         # Background
         self.window.fill(self.backgroundColor)
@@ -50,15 +57,19 @@ class BaseState:
             else:
                 Debug.Error(f'{entity.name} is not loaded...')
         # Draw all debug
+        LINE_WIDTH = 2
         for line in self.debuglines:
-            pygame.draw.line(self.window, line[2], line[0], line[1], 2)
+            pygame.draw.line(self.window, line[2], line[0].toTuple(), line[1].toTuple(), LINE_WIDTH)
         for sq in self.debugrects:
-            pygame.draw.rect(self.window, sq[2], pygame.Rect(sq[0].x,sq[0].y,sq[1].x,sq[1].y), 2)
+            pygame.draw.rect(self.window, sq[2], pygame.Rect(sq[0].x,sq[0].y,sq[1].x,sq[1].y), LINE_WIDTH)
+        for cir in self.debugcircles:
+            pygame.draw.circle(self.window, cir[2], cir[0].toTuple(), cir[1], LINE_WIDTH)
         # Refresh
         pygame.display.update()
         self.renderList.clear()
         self.debuglines.clear()
         self.debugrects.clear()
+        self.debugcircles.clear()
         
     def LogInfo(self):
         Debug.Log(f'Level name : {self.name}')

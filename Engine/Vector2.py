@@ -12,6 +12,9 @@ class Vector2:
     def fromTuple(cls, tuple):
         return cls(tuple[0],tuple[1])
 
+    def toTuple(self):
+        return (self.x, self.y)
+
     def Normalize(self):
         len = self.Length()
         self.x = self.x / len
