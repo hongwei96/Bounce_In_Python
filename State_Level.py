@@ -27,7 +27,7 @@ class State_Level(BaseState):
     def __init__(self, resourcemanager, window):
         super().__init__(resourcemanager, window, State_Level.statename)
         self.backgroundColor = (137, 207, 240)
-        self.gravity = 1.8
+        self.gravity = 9.8
 
         self.showDebug = False
         self.camera = Camera()
@@ -60,7 +60,7 @@ class State_Level(BaseState):
         self.AddDrawDebugCircleCall(player_collider[0], player_collider[1], GREEN_COLOR)
 
     def __handleCollision(self):
-        BLUE_COL = (0,0,255)
+        BLUE_COL = (0, 0, 255)
 
         player_collider = self.player.colliderData()
         # Collision between player and world
@@ -71,21 +71,23 @@ class State_Level(BaseState):
                 resolve_dir = (player_collider[0] - collision.contactPoint).Normalized()
                 resolve_dist = self.player.radius - (player_collider[0] - collision.contactPoint).Length()
                 self.player.position += resolve_dir * resolve_dist
-                self.player.velocity = Vector2.Zero()
-                self.isOnGround = True
+
+                if resolve_dir.y <= -0.7:
+                    self.player.velocity.y = 0
+                    self.isOnGround = True
+                if resolve_dir.y >= 0.7:
+                    self.player.velocity.y = 0
+
                 # Debug draw contact point
                 if self.showDebug:
                     self.AddDrawDebugPointCall(collision.contactPoint, BLUE_COL)
 
     def __handlePhysics(self, dt: float):
         # Gravity
-        if not self.isOnGround:
-            self.player.velocity.y += self.gravity * dt * 2
-            # Terminal velocity
-            if self.player.velocity.y > 33.0:
-                self.player.velocity.y = 33.0
-        else:
-            self.player.velocity.y = 0.0
+        self.player.velocity.y += self.gravity * dt * 2
+        # Terminal velocity
+        if self.player.velocity.y > 33.0:
+            self.player.velocity.y = 33.0
 
         # Friction
         if self.player.velocity.x > 0.3:
@@ -105,6 +107,7 @@ class State_Level(BaseState):
                 if env.key == K_F1:
                     self.showDebug = not self.showDebug
                 if env.key == K_UP and self.isOnGround:
+                    self.isOnGround = False
                     self.player.velocity.y = -7.5
         #elif keypress[K_DOWN]:
         #    self.playerVel.y = 5
@@ -125,6 +128,10 @@ class State_Level(BaseState):
         self.player.position = self.levelMap.GetStartPoint_ScreenPos() - Vector2(0,64)
 
     def Update(self, dt):
+        # Temp fix 
+        if dt > 2.0/60.0:
+            return
+
         self.__handleKeyInput()
         self.__handlePhysics(dt)
         self.__handleCollision()
