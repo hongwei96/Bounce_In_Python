@@ -1,5 +1,6 @@
 from pygame import rect
 from Engine.DebugLog import Debug
+from Engine.ResourceManager import ResourceManager
 from Engine.Vector2 import Vector2
 import pygame
 
@@ -11,10 +12,11 @@ class Entity:
         self.scale = scale
 
 class BaseState:
-    def __init__(self, rm, win, name):
+    def __init__(self, rm : ResourceManager, win : pygame.Surface, name : str):
         self.rm = rm # Resource Manager 
         self.backgroundColor = (255,255,255)
         self.renderList = []
+        self.textList = []
         self.debuglines = []
         self.debugrects = []
         self.debugcircles = []
@@ -34,6 +36,9 @@ class BaseState:
     def AddDrawCall(self, texName, position = Vector2(), rotation = 0, scale = Vector2()):
         self.renderList.append(Entity(texName, position, rotation, scale))
     
+    def AddDrawUIText(self, text):
+        self.textList.append((text, Vector2(), (255,255,255), 24))
+
     def AddDrawDebugLineCall(self, start, end, color):
         self.debuglines.append((start, end, color))
 
@@ -53,7 +58,7 @@ class BaseState:
         for entity in self.renderList:
             texture = self.rm.GetTexture(entity.name)
             if texture != None:
-                self.window.blit(texture.tex, (entity.position.x, entity.position.y))
+                self.window.blit(texture.tex, entity.position.toTuple())
             else:
                 Debug.Error(f'{entity.name} is not loaded...')
         # Draw all debug
@@ -64,9 +69,14 @@ class BaseState:
             pygame.draw.rect(self.window, sq[2], pygame.Rect(sq[0].x,sq[0].y,sq[1].x,sq[1].y), LINE_WIDTH)
         for cir in self.debugcircles:
             pygame.draw.circle(self.window, cir[2], cir[0].toTuple(), cir[1], LINE_WIDTH)
+        # Draw UI Text
+        for textData in self.textList:
+            img = self.rm.RenderFont(textData[0],textData[2],textData[3])
+            self.window.blit(img, textData[1].toTuple())
         # Refresh
         pygame.display.update()
         self.renderList.clear()
+        self.textList.clear()
         self.debuglines.clear()
         self.debugrects.clear()
         self.debugcircles.clear()

@@ -127,6 +127,7 @@ class State_Level(BaseState):
         self.levelMap.GenerateColliders()
         self.player.position = self.levelMap.GetStartPoint_ScreenPos() - Vector2(0,64)
 
+
     def Update(self, dt):
         # Temp fix 
         if dt > 2.0/60.0:
@@ -138,7 +139,7 @@ class State_Level(BaseState):
 
         self.__drawMap()
         super().AddDrawCall("Ball", self.player.position)
-
+        super().AddDrawUIText("TESTING")
 
         if self.showDebug:
             self.__drawColliders()

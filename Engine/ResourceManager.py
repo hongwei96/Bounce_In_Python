@@ -1,8 +1,15 @@
+import pygame
 from Engine.DebugLog import Debug
+
+class ResourceFont:
+    def __init__(self):
+        self.fontName = None
+        self.font : pygame.font.Font = None
 
 class ResourceManager:
     def __init__(self):
         self.textureList = {}
+        self.myFont = ResourceFont()
         pass
 
     def AddTexture(self, tex):
@@ -14,8 +21,20 @@ class ResourceManager:
     def RemoveTexture(self, name):
         self.textureList.pop(name)
     
+    def InitFont(self, font = None, size = 24):
+        self.myFont.fontName = font
+        self.myFont.font = pygame.font.SysFont(font, size)
+    
+    def RenderFont(self, text, color = (255,255,255), size = 24) -> pygame.Surface:
+        if self.myFont.font == None:
+            Debug.Error("Forget to call InitFont()")
+        if size != self.myFont.font.size:
+            self.InitFont(self.myFont.fontName, size)
+        return self.myFont.font.render(text, True, color)
+
     def PrettyPrint(self):
         string = f'Loaded Textures ({len(self.textureList)}):\n'
         for texName in self.textureList:
             string += f'- {texName}\n'
+        string += f'\n Loaded Font ({self.myFont.fontName})\n'
         Debug.Log(string)

@@ -29,6 +29,7 @@ def InitializeResources():
     rm.AddTexture(Texture2D("Ring", "Assets\\Ring.png"))
     rm.AddTexture(Texture2D("Slope", "Assets\\Slope.png"))
     rm.AddTexture(Texture2D("Spike", "Assets\\Spike.png"))
+    rm.InitFont()
     #rm.PrettyPrint()
 
 def InitializeStates():
@@ -45,9 +46,9 @@ def GetDeltaTime(getTicksLastFrame = [0]):
 
 # Game Loop
 def main():
+    pygame.init()
     InitializeResources()
     InitializeStates()
-    pygame.init()
     clock = pygame.time.Clock()
     run = True
     while run:
