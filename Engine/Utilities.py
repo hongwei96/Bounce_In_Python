@@ -10,7 +10,7 @@ class CollisionData:
 # |
 # v
 # y
-def __PointAABB(pt, topleft, bottomright):
+def PointAABB(pt, topleft, bottomright):
     #data = CollisionData()
     if (pt.x <= topleft.x or pt.y <= topleft.y or 
         pt.x >= bottomright.x or pt.y >= bottomright.y):
@@ -39,7 +39,7 @@ def CircleAABB(center, radius, topleft, bottomright):
     #etopright = topright + Vector2(radius, -radius)
     #ebottomleft = bottomleft + Vector2(-radius, radius)
     
-    if not __PointAABB(center, etopleft, ebottomright):
+    if not PointAABB(center, etopleft, ebottomright):
         cData.hit = False
     else:
         # Left side
