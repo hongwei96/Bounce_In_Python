@@ -72,12 +72,12 @@ class State_Level(BaseState):
         YELLOW_COLOR = (255,255,0)
         GREEN_COLOR = (0,255,0)
         for col in self.levelMap.colliders:
-            self.AddDrawDebugRectCall(col.position, col.size, GREEN_COLOR)
+            self.AddDrawDebugRectCall(col.position - self.camera.position, col.size, GREEN_COLOR)
         for trig in self.levelMap.triggers:
-            self.AddDrawDebugRectCall(trig.position, trig.size, YELLOW_COLOR)
+            self.AddDrawDebugRectCall(trig.position - self.camera.position, trig.size, YELLOW_COLOR)
 
         player_collider = self.player.colliderData()
-        self.AddDrawDebugCircleCall(player_collider[0], player_collider[1], GREEN_COLOR)
+        self.AddDrawDebugCircleCall(player_collider[0] - self.camera.position, player_collider[1], GREEN_COLOR)
 
     def __handleCollision(self):
         BLUE_COL = (0, 0, 255)
@@ -100,7 +100,7 @@ class State_Level(BaseState):
 
                 # Debug draw contact point
                 if self.showDebug:
-                    self.AddDrawDebugPointCall(collision.contactPoint, BLUE_COL)
+                    self.AddDrawDebugPointCall(collision.contactPoint - self.camera.position, BLUE_COL)
 
     def __handlePhysics(self, dt: float):
         # Gravity
