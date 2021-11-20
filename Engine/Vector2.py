@@ -59,6 +59,11 @@ class Vector2:
         y = self.y * other
         return Vector2(x, y)
 
+    def __truediv__(self, other: float):
+        x = self.x / other
+        y = self.y / other
+        return Vector2(x, y)
+
     def __eq__(self, other):
         if other != None:
             return (self.x == other.x and self.y == other.y)

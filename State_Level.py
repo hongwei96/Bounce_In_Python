@@ -5,6 +5,7 @@ from Engine.LevelMap import LevelMap
 from Engine.DebugLog import Debug
 from Engine.ResourceManager import ResourceManager
 from Engine.Vector2 import Vector2
+from Engine.Utilities import MYCOLOR
 import Engine.Utilities
 import pygame
 import os
@@ -33,6 +34,10 @@ class Player:
         self.radius = 28
         self.lives = 3
     
+    def Died(self, respawnpt : Vector2):
+        self.position = respawnpt
+        self.lives -= 1
+
     def isDead(self):
         return self.lives <= 0
 
@@ -69,23 +74,19 @@ class State_Level(BaseState):
                         self.AddDrawCall(Tiles[value], position - self.camera.position)
 
     def __drawColliders(self):
-        YELLOW_COLOR = (255,255,0)
-        GREEN_COLOR = (0,255,0)
         for col in self.levelMap.colliders:
-            self.AddDrawDebugRectCall(col.position - self.camera.position, col.size, GREEN_COLOR)
+            self.AddDrawDebugRectCall(col.position - self.camera.position, col.size, MYCOLOR.GREEN)
         for trig in self.levelMap.triggers:
-            self.AddDrawDebugRectCall(trig.position - self.camera.position, trig.size, YELLOW_COLOR)
+            self.AddDrawDebugRectCall(trig.position - self.camera.position, trig.size, MYCOLOR.YELLOW)
 
         player_collider = self.player.colliderData()
-        self.AddDrawDebugCircleCall(player_collider[0] - self.camera.position, player_collider[1], GREEN_COLOR)
+        self.AddDrawDebugCircleCall(player_collider[0] - self.camera.position, player_collider[1], MYCOLOR.GREEN)
 
     def __handleCollision(self):
-        BLUE_COL = (0, 0, 255)
-
         player_collider = self.player.colliderData()
         # Collision between player and world
-        for colider in self.levelMap.colliders:
-            collision = Engine.Utilities.CircleAABB(player_collider[0], player_collider[1], colider.position, colider.position + colider.size)
+        for collider in self.levelMap.colliders:
+            collision = Engine.Utilities.CircleAABB(player_collider[0], player_collider[1], collider.position, collider.position + collider.size)
             if collision.hit:
                 # Resolve
                 resolve_dir = (player_collider[0] - collision.contactPoint).Normalized()
@@ -100,7 +101,20 @@ class State_Level(BaseState):
 
                 # Debug draw contact point
                 if self.showDebug:
-                    self.AddDrawDebugPointCall(collision.contactPoint - self.camera.position, BLUE_COL)
+                    self.AddDrawDebugPointCall(collision.contactPoint - self.camera.position, MYCOLOR.BLUE)
+
+    def __handleTriggers(self):
+        player_collider = self.player.colliderData()
+        for trigger in self.levelMap.triggers:
+            triggered = Engine.Utilities.CircleAABB(player_collider[0], player_collider[1], trigger.position, trigger.position + trigger.size)
+            if triggered.hit:
+                if trigger.name == "Ring":
+                    self.levelMap.RemoveRingTrigger(trigger)
+                elif trigger.name == "Checkpoint_NotActive":
+                    self.levelMap.ActivateCheckpointTrigger(trigger)
+                elif trigger.name == "Spike":
+                    self.player.Died(self.levelMap.GetRespawnPoint_ScreenPos())
+
 
     def __handlePhysics(self, dt: float):
         # Gravity
@@ -155,7 +169,6 @@ class State_Level(BaseState):
         # Init player starting position
         self.player.position = self.levelMap.GetStartPoint_ScreenPos() - Vector2(0,64)
 
-
     def Update(self, dt):
         # Temp fix 
         if dt > 2.0/60.0:
@@ -164,6 +177,7 @@ class State_Level(BaseState):
         self.__handleKeyInput()
         self.__handlePhysics(dt)
         self.__handleCollision()
+        self.__handleTriggers()
 
         self.__drawMap()
         self.__updateCamera()

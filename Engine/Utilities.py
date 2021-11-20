@@ -1,15 +1,27 @@
-from Engine.DebugLog import Debug
 from Engine.Vector2 import Vector2
+
+# Utilities functions
+# Colors
+class MYCOLOR:
+    BLACK  = (0, 0, 0)
+    WHITE  = (255, 255, 255)
+    RED    = (255, 0, 0)
+    BLUE   = (0, 0, 255)
+    GREEN  = (0, 255, 0)
+    YELLOW = (255, 255, 0)
+    CYAN   = (0, 255, 255)
+
+# Collision
+# +-----> x
+# |
+# v
+# y
 
 class CollisionData:
     def __init__(self):
         self.hit = False
         self.contactPoint = Vector2()
-# Utilities functions
-# +-----> x
-# |
-# v
-# y
+
 def PointAABB(pt, topleft, bottomright):
     #data = CollisionData()
     if (pt.x <= topleft.x or pt.y <= topleft.y or 

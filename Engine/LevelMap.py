@@ -21,9 +21,14 @@ class LevelMap:
         self.map = []
         self.startpoint = Vector2()
         self.endpoint = Vector2()
+        self.spawnpoint = Vector2()
+        self.resetPoints = []
 
     def GetStartPoint_ScreenPos(self):
         return self.startpoint * self.gridsize
+    
+    def GetRespawnPoint_ScreenPos(self):
+        return self.spawnpoint * self.gridsize
 
     def LoadMap(self, path):
         with open(path, "r") as f:
@@ -37,6 +42,7 @@ class LevelMap:
                     self.map.append(value)
                     if value == LevelMap.TilesToIndexMap["Startpoint"]:
                         self.startpoint = Vector2(x,y)
+                        self.spawnpoint = self.startpoint
                     elif value == LevelMap.TilesToIndexMap["Endpoint"]:
                         self.endpoint = Vector2(x,y)
                     x += 1
@@ -79,6 +85,7 @@ class LevelMap:
                     self.triggers.append(Box(LevelMap.Tiles[value], 
                                                 Vector2(x,y) * self.gridsize + Vector2(self.gridsize/4,0), 
                                                 Vector2(self.gridsize/2, self.gridsize)))
+                    self.resetPoints.append((y * dimension[0] + x, value))
                 elif value == 4: # Spike
                     self.triggers.append(Box(LevelMap.Tiles[value], 
                                                 Vector2(x,y) * self.gridsize + Vector2(0,self.gridsize/2), 
@@ -91,4 +98,23 @@ class LevelMap:
                     self.triggers.append(Box(LevelMap.Tiles[value], 
                                                 Vector2(x,y) * self.gridsize, 
                                                 Vector2(self.gridsize, self.gridsize)))
+                    self.resetPoints.append((y * dimension[0] + x, value))
     
+    def Reset(self):
+        # Reset coins
+        # Reset checkpoints
+        for point in self.resetPoints:
+            self.map[point[0]] = point[1]
+        # Reset spawnpoint
+        self.spawnpoint = self.startpoint
+
+    def RemoveRingTrigger(self, trigger : Box):
+        rpos = (trigger.position - Vector2(self.gridsize / 4, 0)) / self.gridsize
+        index = int(rpos.y) * self.mapDim[0] + int(rpos.x)
+        self.map[index] = LevelMap.TilesToIndexMap["-"]
+
+    def ActivateCheckpointTrigger(self, trigger : Box):
+        rpos = trigger.position / self.gridsize
+        index = int(rpos.y) * self.mapDim[0] + int(rpos.x)
+        self.map[index] = LevelMap.TilesToIndexMap["Checkpoint_Active"]
+        self.spawnpoint = rpos + Vector2(0, -1)
