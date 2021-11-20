@@ -10,6 +10,8 @@ import Engine.Utilities
 import pygame
 import os
 
+from State_MainMenu import State_MainMenu
+
 class Camera:
     def __init__(self, size : Vector2):
         self.position = Vector2()
@@ -46,7 +48,7 @@ class Player:
         return (self.position + Vector2(32,32), self.radius)
 
 class State_Level(BaseState):
-    statename = "Level 1"
+    statename = "Levels"
 
     def __init__(self, sm : StateManager, rm : ResourceManager, window : pygame.Surface):
         super().__init__(sm, rm, window, State_Level.statename)
@@ -60,7 +62,8 @@ class State_Level(BaseState):
         self.isOnGround = False
 
         self.levelMap = LevelMap(64) # GridSize = 64x64
-        self.level = 1
+        self.numOfLevels = 2
+        self.currentLevel = 1
             
     def __drawMap(self):
         Tiles = LevelMap.Tiles
@@ -122,6 +125,13 @@ class State_Level(BaseState):
                     elif trigger.name == "Spike":
                         self.player.Died(self.levelMap.GetRespawnPoint_ScreenPos())
                         self.rm.GetAudioClip("Hit").Play()
+                    elif trigger.name == "Endpoint":
+                        trigger.active = False
+                        if self.currentLevel != self.numOfLevels:
+                            self.__LoadLevel(self.currentLevel + 1)
+                        else:
+                            self.sm.ChangeState("Main Menu")
+                        break
 
     def __handlePhysics(self, dt: float):
         # Gravity
@@ -167,16 +177,20 @@ class State_Level(BaseState):
         self.camera.position = self.player.position - Vector2(400, 400)
         self.camera.clampToBoundary()
 
-    def Load(self):
-        super().Load()
-        self.rm.GetAudioClip("inGameBGM").source.play(loops=-1)
-        self.levelMap.LoadMap(os.path.join("Assets", "Level", f'Level{self.level}.dat'))
+    def __LoadLevel(self, level):
+        self.currentLevel = level
+        self.levelMap.LoadMap(os.path.join("Assets", "Level", f'Level{self.currentLevel}.dat'))
         self.levelMap.GenerateColliders()
         # Init camera settings
         self.camera.boundary = (Vector2(), Vector2(self.levelMap.mapDim[0] * 64 - self.camera.size.x,
                                                    self.levelMap.mapDim[1] * 64 - self.camera.size.y))
         # Init player starting position
         self.player.position = self.levelMap.GetStartPoint_ScreenPos() - Vector2(0,64)
+
+    def Load(self):
+        super().Load()
+        self.rm.GetAudioClip("inGameBGM").source.play(loops=-1)
+        self.__LoadLevel(self.currentLevel)
 
     def Unload(self):
         super().Unload()

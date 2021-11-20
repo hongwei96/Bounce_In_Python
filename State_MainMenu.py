@@ -6,7 +6,6 @@ from Engine.LevelMap import LevelMap
 from Engine.ResourceManager import ResourceManager
 from Engine.StateManager import StateManager
 from Engine.Vector2 import Vector2
-from State_Level import State_Level
 from Engine.Utilities import MYCOLOR
 import os
 
@@ -41,7 +40,7 @@ class State_MainMenu(BaseState):
                     self.rm.GetAudioClip("Selecting").Play()
                 elif env.key == K_RETURN:
                     if self.selected == 0:
-                        self.sm.ChangeState(State_Level.statename)
+                        self.sm.ChangeState("Levels")
                     else:
                         self.sm.ChangeState("None")
 

@@ -53,6 +53,7 @@ class LevelMap:
     def GenerateColliders(self):
         # Reset existing colliders
         self.colliders.clear()
+        self.triggers.clear()
         # Find colliders
         mymap = self.map.copy()
         dimension = self.mapDim
