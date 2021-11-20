@@ -8,3 +8,12 @@ class Texture2D:
         self.path = path
         self.tex = pygame.image.load(os.path.join(path)).convert_alpha()
         self.rect = Vector2(self.tex.get_rect()[2], self.tex.get_rect()[3])
+
+class Audio:
+    def __init__(self, name, path):
+        self.name = name
+        self.path = path
+        self.source : pygame.mixer.Sound = pygame.mixer.Sound(path)
+    
+    def Play(self):
+        self.source.play()

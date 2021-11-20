@@ -33,6 +33,7 @@ class Player:
         self.velocity = Vector2(0,0)
         self.radius = 28
         self.lives = 3
+        self.coins = 0
     
     def Died(self, respawnpt : Vector2):
         self.position = respawnpt
@@ -106,14 +107,21 @@ class State_Level(BaseState):
     def __handleTriggers(self):
         player_collider = self.player.colliderData()
         for trigger in self.levelMap.triggers:
-            triggered = Engine.Utilities.CircleAABB(player_collider[0], player_collider[1], trigger.position, trigger.position + trigger.size)
-            if triggered.hit:
-                if trigger.name == "Ring":
-                    self.levelMap.RemoveRingTrigger(trigger)
-                elif trigger.name == "Checkpoint_NotActive":
-                    self.levelMap.ActivateCheckpointTrigger(trigger)
-                elif trigger.name == "Spike":
-                    self.player.Died(self.levelMap.GetRespawnPoint_ScreenPos())
+            if trigger.active:
+                triggered = Engine.Utilities.CircleAABB(player_collider[0], player_collider[1],
+                                                        trigger.position, trigger.position + trigger.size)
+                if triggered.hit:
+                    if trigger.name == "Ring":
+                        self.levelMap.RemoveRingTrigger(trigger)
+                        self.rm.GetAudioClip("PickupCoin").Play()
+                        trigger.active = False
+                    elif trigger.name == "Checkpoint_NotActive":
+                        self.levelMap.ActivateCheckpointTrigger(trigger)
+                        self.rm.GetAudioClip("Checkpoint").Play()
+                        trigger.active = False
+                    elif trigger.name == "Spike":
+                        self.player.Died(self.levelMap.GetRespawnPoint_ScreenPos())
+                        self.rm.GetAudioClip("Hit").Play()
 
     def __handlePhysics(self, dt: float):
         # Gravity
@@ -142,6 +150,7 @@ class State_Level(BaseState):
                 if env.key == K_UP and self.isOnGround:
                     self.isOnGround = False
                     self.player.velocity.y = -7.5
+                    self.rm.GetAudioClip("Jump").Play()
         #elif keypress[K_DOWN]:
         #    self.playerVel.y = 5
 
@@ -160,6 +169,7 @@ class State_Level(BaseState):
 
     def Load(self):
         super().Load()
+        self.rm.GetAudioClip("inGameBGM").source.play(loops=-1)
         self.levelMap.LoadMap(os.path.join("Assets", "Level", f'Level{self.level}.dat'))
         self.levelMap.GenerateColliders()
         # Init camera settings
@@ -167,6 +177,10 @@ class State_Level(BaseState):
                                                    self.levelMap.mapDim[1] * 64 - self.camera.size.y))
         # Init player starting position
         self.player.position = self.levelMap.GetStartPoint_ScreenPos() - Vector2(0,64)
+
+    def Unload(self):
+        super().Unload()
+        self.rm.GetAudioClip("inGameBGM").source.stop()
 
     def Update(self, dt):
         self.__handleKeyInput()

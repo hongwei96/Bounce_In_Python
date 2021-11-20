@@ -1,8 +1,7 @@
 import pygame
-from Engine.DebugLog import Debug
 from Engine.StateManager import StateManager
 from Engine.ResourceManager import ResourceManager
-from Engine.Resources import Texture2D
+from Engine.Resources import Texture2D, Audio
 from State_Level import State_Level
 from State_MainMenu import State_MainMenu
 
@@ -31,8 +30,21 @@ def InitializeResources():
     rm.AddTexture(Texture2D("Slope", "Assets\\Slope.png"))
     rm.AddTexture(Texture2D("Spike", "Assets\\Spike.png"))
     rm.AddTexture(Texture2D("Title", "Assets\\Title.png"))
-    rm.AddTexture(Texture2D("Button_Play", "Assets\\Button_Play.png"))
-    rm.AddTexture(Texture2D("Button_Quit", "Assets\\Button_Quit.png"))
+
+    rm.AddAudioClip(Audio("Selecting", "Assets\\SFX\\blipSelect.wav"))
+    rm.GetAudioClip("Selecting").source.set_volume(0.4)
+    rm.AddAudioClip(Audio("Checkpoint", "Assets\\SFX\\checkpoint.wav"))
+    rm.GetAudioClip("Checkpoint").source.set_volume(0.4)
+    rm.AddAudioClip(Audio("Hit", "Assets\\SFX\\hitHurt.wav"))
+    rm.GetAudioClip("Hit").source.set_volume(0.5)
+    rm.AddAudioClip(Audio("Jump", "Assets\\SFX\\jump.wav"))
+    rm.GetAudioClip("Jump").source.set_volume(0.2)
+    rm.AddAudioClip(Audio("PickupCoin", "Assets\\SFX\\pickupCoin.wav"))
+    rm.GetAudioClip("PickupCoin").source.set_volume(0.4)
+    rm.AddAudioClip(Audio("MainMenuBGM", "Assets\\SFX\\mainMenuBGM.wav"))
+    rm.GetAudioClip("MainMenuBGM").source.set_volume(0.3)
+    rm.AddAudioClip(Audio("inGameBGM", "Assets\\SFX\\inGameBGM.wav"))
+    rm.GetAudioClip("inGameBGM").source.set_volume(1.0)
 
     rm.InitFont()
     #rm.PrettyPrint()

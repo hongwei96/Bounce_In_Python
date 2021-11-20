@@ -1,10 +1,11 @@
 from Engine.Vector2 import Vector2
 
 class Box:
-    def __init__(self, name, pos = None, size = None):
+    def __init__(self, name, pos = None, size = None, active = True):
         self.name = name
         self.position = Vector2() if pos == None else pos
         self.size = Vector2() if size == None else size
+        self.active = active
 
 class LevelMap:
     Tiles = ["-", "Brick", "Slope", "Ring", "Spike", "Startpoint", "Endpoint",
@@ -105,6 +106,8 @@ class LevelMap:
         # Reset checkpoints
         for point in self.resetPoints:
             self.map[point[0]] = point[1]
+        for trig in self.triggers:
+            trig.active = True
         # Reset spawnpoint
         self.spawnpoint = self.startpoint
 

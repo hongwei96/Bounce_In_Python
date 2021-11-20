@@ -38,6 +38,7 @@ class State_MainMenu(BaseState):
             if env.type == pygame.KEYDOWN:            
                 if env.key == K_UP or env.key == K_DOWN:
                     self.selected = 0 if self.selected == 1 else 1
+                    self.rm.GetAudioClip("Selecting").Play()
                 elif env.key == K_RETURN:
                     if self.selected == 0:
                         self.sm.ChangeState(State_Level.statename)
@@ -48,7 +49,11 @@ class State_MainMenu(BaseState):
     def Load(self):
         super().Load()
         self.levelMap.LoadMap(os.path.join("Assets", "Level", 'TitleScreen.dat'))
-        
+        self.rm.GetAudioClip("MainMenuBGM").source.play(loops=-1)
+    
+    def Unload(self):
+        super().Unload()
+        self.rm.GetAudioClip("MainMenuBGM").source.stop()
     
     def Update(self, dt):
         self.__handleKeyInput()

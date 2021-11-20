@@ -1,5 +1,6 @@
 import pygame
 from Engine.DebugLog import Debug
+from Engine.Resources import Audio, Texture2D
 
 class ResourceFont:
     def __init__(self):
@@ -9,13 +10,20 @@ class ResourceFont:
 class ResourceManager:
     def __init__(self):
         self.textureList = {}
+        self.audioClipList = {}
         self.myFont = ResourceFont()
         pass
+    
+    def AddAudioClip(self, audio):
+        self.audioClipList[audio.name] = audio
+
+    def GetAudioClip(self, name) -> Audio:
+        return self.audioClipList.get(name)
 
     def AddTexture(self, tex):
         self.textureList[tex.name] = tex
 
-    def GetTexture(self, name):
+    def GetTexture(self, name) -> Texture2D:
         return self.textureList.get(name)
     
     def RemoveTexture(self, name):
