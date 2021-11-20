@@ -4,6 +4,7 @@ from Engine.StateManager import StateManager
 from Engine.ResourceManager import ResourceManager
 from Engine.Resources import Texture2D
 from State_Level import State_Level
+from State_MainMenu import State_MainMenu
 
 # Global Constants
 FPS = 60
@@ -29,12 +30,17 @@ def InitializeResources():
     rm.AddTexture(Texture2D("Ring", "Assets\\Ring.png"))
     rm.AddTexture(Texture2D("Slope", "Assets\\Slope.png"))
     rm.AddTexture(Texture2D("Spike", "Assets\\Spike.png"))
+    rm.AddTexture(Texture2D("Title", "Assets\\Title.png"))
+    rm.AddTexture(Texture2D("Button_Play", "Assets\\Button_Play.png"))
+    rm.AddTexture(Texture2D("Button_Quit", "Assets\\Button_Quit.png"))
+
     rm.InitFont()
     #rm.PrettyPrint()
 
 def InitializeStates():
     sm.AddState(State_Level)
-    sm.ChangeState(State_Level.statename)
+    sm.AddState(State_MainMenu)
+    sm.ChangeState(State_MainMenu.statename)
 
 def GetDeltaTime(getTicksLastFrame = [0]):
     t = pygame.time.get_ticks()
@@ -67,8 +73,11 @@ def main():
         sm.UpdateState(eventList, GetDeltaTime())
 
         if sm.IsStateChanged():
-            sm.UnloadCurrentState()
-    
+            if sm.isQuit():
+                run = False
+            else:
+                sm.UnloadCurrentState()
+
     sm.CleanUp()
     pygame.quit()
 

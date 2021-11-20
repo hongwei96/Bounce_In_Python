@@ -1,9 +1,9 @@
-from pygame import event
 from pygame.constants import K_DOWN, K_F1, K_LEFT, K_RIGHT, K_UP
 from Engine.BaseState import BaseState
 from Engine.LevelMap import LevelMap
 from Engine.DebugLog import Debug
 from Engine.ResourceManager import ResourceManager
+from Engine.StateManager import StateManager
 from Engine.Vector2 import Vector2
 from Engine.Utilities import MYCOLOR
 import Engine.Utilities
@@ -47,9 +47,9 @@ class Player:
 class State_Level(BaseState):
     statename = "Level 1"
 
-    def __init__(self, resourcemanager : ResourceManager, window : pygame.Surface):
-        super().__init__(resourcemanager, window, State_Level.statename)
-        self.backgroundColor = (137, 207, 240)
+    def __init__(self, sm : StateManager, rm : ResourceManager, window : pygame.Surface):
+        super().__init__(sm, rm, window, State_Level.statename)
+        self.backgroundColor = (100, 180, 220)
         self.gravity = 9.8
 
         self.showDebug = False
@@ -115,7 +115,6 @@ class State_Level(BaseState):
                 elif trigger.name == "Spike":
                     self.player.Died(self.levelMap.GetRespawnPoint_ScreenPos())
 
-
     def __handlePhysics(self, dt: float):
         # Gravity
         self.player.velocity.y += self.gravity * dt * 2
@@ -170,10 +169,6 @@ class State_Level(BaseState):
         self.player.position = self.levelMap.GetStartPoint_ScreenPos() - Vector2(0,64)
 
     def Update(self, dt):
-        # Temp fix 
-        if dt > 2.0/60.0:
-            return
-
         self.__handleKeyInput()
         self.__handlePhysics(dt)
         self.__handleCollision()
@@ -181,8 +176,8 @@ class State_Level(BaseState):
 
         self.__drawMap()
         self.__updateCamera()
-        super().AddDrawCall("Ball", self.player.position - self.camera.position)
-        super().AddDrawUIText(f'Lives : {self.player.lives}')
+        self.AddDrawCall("Ball", self.player.position - self.camera.position)
+        self.AddDrawUIText(f'Lives : {self.player.lives}')
 
         if self.showDebug:
             self.__drawColliders()

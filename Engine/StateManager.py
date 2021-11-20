@@ -8,12 +8,15 @@ class StateManager:
         self.currentState = "None"
         self.states = {}
 
+    def isQuit(self):
+        return self.newState == "None"
+
     # state: type
     def AddState(self, state):
         if state.statename in self.states:
             Debug.Warn(f'State \"{state.statename}\" already exist')
         else:
-            self.states[state.statename] = state(self.resourcemanager, self.window)
+            self.states[state.statename] = state(self, self.resourcemanager, self.window)
 
     def RemoveState(self, state):
         if state.statename in self.states:
@@ -49,7 +52,7 @@ class StateManager:
                 self.newState = "None"
     
     def ChangeState(self, newstate):
-        if newstate in self.states:
+        if newstate == "None" or newstate in self.states:
             if newstate != self.currentState:
                 self.newState = newstate
                 Debug.Log(f'Changing State... {self.currentState} -> {self.newState}')

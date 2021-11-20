@@ -1,6 +1,7 @@
 from pygame import rect
 from Engine.DebugLog import Debug
 from Engine.ResourceManager import ResourceManager
+from Engine.StateManager import StateManager
 from Engine.Vector2 import Vector2
 import pygame
 
@@ -12,8 +13,9 @@ class Entity:
         self.scale = scale
 
 class BaseState:
-    def __init__(self, rm : ResourceManager, win : pygame.Surface, name : str):
+    def __init__(self, sm : StateManager, rm : ResourceManager, win : pygame.Surface, name : str):
         self.rm = rm # Resource Manager 
+        self.sm = sm # State Manager
         self.backgroundColor = (255,255,255)
         self.renderList = []
         self.textList = []
@@ -33,11 +35,11 @@ class BaseState:
     def Update(self, dt):
         pass
 
-    def AddDrawCall(self, texName, position = Vector2(), rotation = 0, scale = Vector2()):
+    def AddDrawCall(self, texName : str, position : Vector2 = Vector2(), rotation : float = 0, scale : Vector2 = Vector2()):
         self.renderList.append(Entity(texName, position, rotation, scale))
     
-    def AddDrawUIText(self, text):
-        self.textList.append((text, Vector2(), (255,255,255), 24))
+    def AddDrawUIText(self, text : str, pos : Vector2 = Vector2(), col : tuple = (255,255,255), size : int = 24):
+        self.textList.append((text, pos, col, size))
 
     def AddDrawDebugLineCall(self, start, end, color):
         self.debuglines.append((start, end, color))
