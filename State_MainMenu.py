@@ -1,4 +1,3 @@
-import pygame
 from pygame.constants import K_DOWN, K_RETURN, K_UP
 from Engine.BaseState import BaseState
 from Engine.DebugLog import Debug
@@ -7,7 +6,33 @@ from Engine.ResourceManager import ResourceManager
 from Engine.StateManager import StateManager
 from Engine.Vector2 import Vector2
 from Engine.Utilities import MYCOLOR
+import pygame
 import os
+
+class CycleOptions:
+    def __init__(self, min : int, max : int):
+        self.currentVal : int = 0
+        self.minmax = (min, max)
+
+    def Inc(self) -> int:
+        if self.currentVal == self.minmax[1]:
+            self.currentVal = self.minmax[0]
+        else:
+            self.currentVal += 1
+        return self.currentVal
+
+    def Dec(self) -> int:
+        if self.currentVal == self.minmax[0]:
+            self.currentVal = self.minmax[1]
+        else:
+            self.currentVal -= 1
+        return self.currentVal
+    
+    def GetColor(self, val):
+        return MYCOLOR.RED if self.currentVal == val else MYCOLOR.WHITE
+
+    def GetSize(self, val):
+        return 70 if self.currentVal == val else 50
 
 class State_MainMenu(BaseState):
     statename = "Main Menu"
@@ -16,8 +41,9 @@ class State_MainMenu(BaseState):
         super().__init__(sm, rm, window, State_MainMenu.statename)
         self.backgroundColor = (100, 180, 220)
         
-        self.selected = 0
+        self.options = CycleOptions(0,2)
         self.levelMap = LevelMap(64) # GridSize = 64x64
+        self.showCredits = False
     
     def __drawMap(self):
         Tiles = LevelMap.Tiles
@@ -35,15 +61,34 @@ class State_MainMenu(BaseState):
         # Toggle Debug
         for env in self.eventlist:
             if env.type == pygame.KEYDOWN:            
-                if env.key == K_UP or env.key == K_DOWN:
-                    self.selected = 0 if self.selected == 1 else 1
+                if env.key == K_UP and not self.showCredits:
+                    self.options.Dec()
+                    self.rm.GetAudioClip("Selecting").Play()
+                elif env.key == K_DOWN and not self.showCredits:
+                    self.options.Inc()
                     self.rm.GetAudioClip("Selecting").Play()
                 elif env.key == K_RETURN:
-                    if self.selected == 0:
+                    if self.options.currentVal == 0:
                         self.sm.ChangeState("Levels")
-                    else:
+                    elif self.options.currentVal == 1:
+                        self.showCredits = not self.showCredits
+                    elif self.options.currentVal == 2:
                         self.sm.ChangeState("None")
+                    self.rm.GetAudioClip("Selecting").Play()
 
+    def __drawUIs(self):
+        if not self.showCredits:
+            self.AddDrawCall("Title", Vector2(0, 0))
+            self.AddDrawUIText("Play", Vector2(32, 200), self.options.GetColor(0), self.options.GetSize(0))
+            self.AddDrawUIText("Credits", Vector2(32, 250), self.options.GetColor(1), self.options.GetSize(1))
+            self.AddDrawUIText("Quit", Vector2(32, 300), self.options.GetColor(2), self.options.GetSize(2))
+        else:
+            self.AddDrawUIText("Credits", Vector2(32, 64), MYCOLOR.RED, 72)
+            self.AddDrawUIText("Game made in Python by Chua Hong Wei", Vector2(32, 130), MYCOLOR.WHITE, 30)
+            self.AddDrawUIText("BGM done by Chua Hong Zhi", Vector2(32, 160), MYCOLOR.WHITE, 30)
+            self.AddDrawUIText("SFX generated at https://sfxr.me/", Vector2(32, 190), MYCOLOR.WHITE, 30)
+            self.AddDrawUIText("[Enter] Return to main menu", Vector2(32, 400), MYCOLOR.RED, 30)
+            
 
     def Load(self):
         super().Load()
@@ -58,11 +103,7 @@ class State_MainMenu(BaseState):
         self.__handleKeyInput()
         # Draw screen
         self.__drawMap()
-        self.AddDrawCall("Title", Vector2(0, 0))
-        self.AddDrawUIText("Play", Vector2(32, 200), MYCOLOR.RED if self.selected == 0 else MYCOLOR.WHITE, 
-                                                        70 if self.selected == 0 else 50)
-        self.AddDrawUIText("Quit", Vector2(32, 250), MYCOLOR.RED if self.selected == 1 else MYCOLOR.WHITE,
-                                                        70 if self.selected == 1 else 50)
+        self.__drawUIs()
 
         super().Update(dt)
         super().Draw()

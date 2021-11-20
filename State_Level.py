@@ -131,6 +131,7 @@ class State_Level(BaseState):
                             self.__LoadLevel(self.currentLevel + 1)
                         else:
                             self.sm.ChangeState("Main Menu")
+                            self.currentLevel = 1
                         break
 
     def __handlePhysics(self, dt: float):
