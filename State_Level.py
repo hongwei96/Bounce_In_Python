@@ -86,6 +86,14 @@ class State_Level(BaseState):
         player_collider = self.player.colliderData()
         self.AddDrawDebugCircleCall(player_collider[0] - self.camera.position, player_collider[1], MYCOLOR.GREEN)
 
+    def __drawUI(self):
+        self.AddDrawUITex("Black", Vector2(), 0, Vector2(2, 1.3))
+        self.AddDrawUITex("Ball", Vector2(10,3), 0, Vector2(0.6, 0.6))
+        self.AddDrawUIText(f'x{self.player.lives}', Vector2(55, 10), MYCOLOR.WHITE, 30)
+        self.AddDrawUITex("Ring", Vector2(10,43), 0, Vector2(0.6, 0.6))
+        self.AddDrawUIText(f'x{self.player.coins}', Vector2(55, 50), MYCOLOR.WHITE, 30)
+
+
     def __handleCollision(self):
         player_collider = self.player.colliderData()
         # Collision between player and world
@@ -115,6 +123,7 @@ class State_Level(BaseState):
                                                         trigger.position, trigger.position + trigger.size)
                 if triggered.hit:
                     if trigger.name == "Ring":
+                        self.player.coins += 1
                         self.levelMap.RemoveRingTrigger(trigger)
                         self.rm.GetAudioClip("PickupCoin").Play()
                         trigger.active = False
@@ -206,7 +215,7 @@ class State_Level(BaseState):
         self.__drawMap()
         self.__updateCamera()
         self.AddDrawCall("Ball", self.player.position - self.camera.position)
-        self.AddDrawUIText(f'Lives : {self.player.lives}')
+        self.__drawUI()
 
         if self.showDebug:
             self.__drawColliders()

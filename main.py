@@ -22,6 +22,8 @@ sm = StateManager(rm, WIN)
 def InitializeResources():
     rm.AddTexture(Texture2D("Ball", "Assets\\Ball.png"))
     rm.AddTexture(Texture2D("Brick", "Assets\\Brick.png"))
+    rm.AddTexture(Texture2D("Black", "Assets\\Black.png"))
+    rm.GetTexture("Black").tex.set_alpha(128)
     rm.AddTexture(Texture2D("Checkpoint_Active", "Assets\\Checkpoint_Active.png"))
     rm.AddTexture(Texture2D("Checkpoint_NotActive", "Assets\\Checkpoint_NotActive.png"))
     rm.AddTexture(Texture2D("Startpoint", "Assets\\Startpoint.png"))

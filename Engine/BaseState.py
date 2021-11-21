@@ -18,6 +18,7 @@ class BaseState:
         self.sm = sm # State Manager
         self.backgroundColor = (255,255,255)
         self.renderList = []
+        self.UIrenderList = []
         self.textList = []
         self.debuglines = []
         self.debugrects = []
@@ -35,9 +36,12 @@ class BaseState:
     def Update(self, dt):
         pass
 
-    def AddDrawCall(self, texName : str, position : Vector2 = Vector2(), rotation : float = 0, scale : Vector2 = Vector2()):
+    def AddDrawCall(self, texName : str, position : Vector2 = Vector2(), rotation : float = 0, scale : Vector2 = Vector2.One()):
         self.renderList.append(Entity(texName, position, rotation, scale))
     
+    def AddDrawUITex(self, texName : str, position : Vector2 = Vector2(), rotation : float = 0, scale : Vector2 = Vector2.One()):
+        self.UIrenderList.append(Entity(texName, position, rotation, scale))
+
     def AddDrawUIText(self, text : str, pos : Vector2 = Vector2(), col : tuple = (255,255,255), size : int = 24):
         self.textList.append((text, pos, col, size))
 
@@ -60,7 +64,8 @@ class BaseState:
         for entity in self.renderList:
             texture = self.rm.GetTexture(entity.name)
             if texture != None:
-                self.window.blit(texture.tex, entity.position.toTuple())
+                self.window.blit(pygame.transform.scale(texture.tex, texture.GetNewSizeAfterScale(entity.scale).toTuple()),
+                                 entity.position.toTuple())
             else:
                 Debug.Error(f'{entity.name} is not loaded...')
         # Draw all debug
@@ -71,13 +76,24 @@ class BaseState:
             pygame.draw.rect(self.window, sq[2], pygame.Rect(sq[0].x,sq[0].y,sq[1].x,sq[1].y), LINE_WIDTH)
         for cir in self.debugcircles:
             pygame.draw.circle(self.window, cir[2], cir[0].toTuple(), cir[1], LINE_WIDTH)
+
+        # Draw UI Texture
+        for entity in self.UIrenderList:
+            texture = self.rm.GetTexture(entity.name)
+            if texture != None:
+                self.window.blit(pygame.transform.scale(texture.tex, texture.GetNewSizeAfterScale(entity.scale).toTuple()), 
+                                 entity.position.toTuple())
+            else:
+                Debug.Error(f'{entity.name} is not loaded...')
         # Draw UI Text
         for textData in self.textList:
             img = self.rm.RenderFont(textData[0],textData[2],textData[3])
             self.window.blit(img, textData[1].toTuple())
+            
         # Refresh
         pygame.display.update()
         self.renderList.clear()
+        self.UIrenderList.clear()
         self.textList.clear()
         self.debuglines.clear()
         self.debugrects.clear()
