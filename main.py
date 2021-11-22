@@ -31,6 +31,7 @@ def InitializeResources():
     rm.AddTexture(Texture2D("Ring", "Assets\\Ring.png"))
     rm.AddTexture(Texture2D("Slope", "Assets\\Slope.png"))
     rm.AddTexture(Texture2D("Spike", "Assets\\Spike.png"))
+    rm.AddTexture(Texture2D("JumpPad", "Assets\\JumpPad.png"))
     rm.AddTexture(Texture2D("Title", "Assets\\Title.png"))
 
     rm.AddAudioClip(Audio("Selecting", "Assets\\SFX\\blipSelect.wav"))

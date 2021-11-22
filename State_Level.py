@@ -39,6 +39,7 @@ class Player:
     
     def Died(self, respawnpt : Vector2):
         self.position = respawnpt
+        self.velocity.SetZero()
         self.lives -= 1
 
     def isDead(self):
@@ -134,6 +135,10 @@ class State_Level(BaseState):
                     elif trigger.name == "Spike":
                         self.player.Died(self.levelMap.GetRespawnPoint_ScreenPos())
                         self.rm.GetAudioClip("Hit").Play()
+                        break
+                    elif trigger.name == "JumpPad":
+                        self.player.velocity.y = -20
+                        break
                     elif trigger.name == "Endpoint":
                         trigger.active = False
                         if self.currentLevel != self.numOfLevels:
@@ -200,6 +205,7 @@ class State_Level(BaseState):
     def __ResetStats(self):
         self.player.coins = 0
         self.player.lives = 3
+        self.player.velocity.SetZero()
 
     def Load(self):
         super().Load()

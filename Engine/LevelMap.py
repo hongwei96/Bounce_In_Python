@@ -8,11 +8,11 @@ class Box:
         self.active = active
 
 class LevelMap:
-    Tiles = ["-", "Brick", "Slope", "Ring", "Spike", "Startpoint", "Endpoint",
+    Tiles = ["-", "Brick", "Slope", "Ring", "Spike", "JumpPad", "Startpoint", "Endpoint",
             "Checkpoint_Active", "Checkpoint_NotActive"]
     TilesToIndexMap = {"-" : 0, "Brick" : 1, "Slope" : 2, "Ring" : 3, 
-                        "Spike" : 4, "Startpoint" : 5, "Endpoint" : 6,
-                        "Checkpoint_Active" : 7, "Checkpoint_NotActive" : 8}
+                        "Spike" : 4, "JumpPad" : 5, "Startpoint" : 6, "Endpoint" : 7,
+                        "Checkpoint_Active" : 8, "Checkpoint_NotActive" : 9}
             
     def __init__(self, gridsize):
         self.gridsize = gridsize
@@ -92,11 +92,15 @@ class LevelMap:
                     self.triggers.append(Box(LevelMap.Tiles[value], 
                                                 Vector2(x,y) * self.gridsize + Vector2(0,self.gridsize/2), 
                                                 Vector2(self.gridsize, self.gridsize/2)))
-                elif value == 5 or value == 6: # Startpoint / Endpoint
+                elif value == 5: # JumpPad
+                    self.triggers.append(Box(LevelMap.Tiles[value], 
+                                                Vector2(x,y) * self.gridsize + Vector2(0,8), 
+                                                Vector2(self.gridsize, self.gridsize-8)))
+                elif value == 6 or value == 7: # Startpoint / Endpoint
                     self.triggers.append(Box(LevelMap.Tiles[value], 
                                                 Vector2(x,y) * self.gridsize, 
                                                 Vector2(self.gridsize, self.gridsize)))
-                elif value == 8: # Checkpoint_NotActive, ignore 6(Checkpoint_Active)
+                elif value == 9: # Checkpoint_NotActive, ignore 6(Checkpoint_Active)
                     self.triggers.append(Box(LevelMap.Tiles[value], 
                                                 Vector2(x,y) * self.gridsize, 
                                                 Vector2(self.gridsize, self.gridsize)))
