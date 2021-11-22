@@ -197,10 +197,15 @@ class State_Level(BaseState):
         # Init player starting position
         self.player.position = self.levelMap.GetStartPoint_ScreenPos() - Vector2(0,64)
 
+    def __ResetStats(self):
+        self.player.coins = 0
+        self.player.lives = 3
+
     def Load(self):
         super().Load()
         self.rm.GetAudioClip("inGameBGM").source.play(loops=-1)
         self.__LoadLevel(self.currentLevel)
+        self.__ResetStats()
 
     def Unload(self):
         super().Unload()
