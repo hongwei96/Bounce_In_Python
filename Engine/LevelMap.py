@@ -67,7 +67,7 @@ class LevelMap:
                     # Combine horizonal colliders
                     if x < dimension[0]:
                         for i in range(x+1, dimension[0]):
-                            if mymap[y * dimension[0] + (i)] == 1:
+                            if mymap[y * dimension[0] + (i)] == value:
                                 mymap[y * dimension[0] + (i)] = 0
                                 combinedSize.x += 1
                             else:
@@ -75,7 +75,7 @@ class LevelMap:
                     # If no horizontal then check vertical and combine
                     if y < dimension[1] and combinedSize.x == 1:
                         for i in range(y+1, dimension[1]):
-                            if mymap[(i) * dimension[0] + x] == 1:
+                            if mymap[(i) * dimension[0] + x] == value:
                                 mymap[(i) * dimension[0] + x] = 0
                                 combinedSize.y += 1
                             else:
@@ -89,9 +89,18 @@ class LevelMap:
                                                 Vector2(self.gridsize/2, self.gridsize)))
                     self.resetPoints.append((y * dimension[0] + x, value))
                 elif value == 4: # Spike
+                    horizontalCount = 1
+                    # Combine horizonal colliders
+                    if x < dimension[0]:
+                        for i in range(x+1, dimension[0]):
+                            if mymap[y * dimension[0] + (i)] == value:
+                                mymap[y * dimension[0] + (i)] = 0
+                                horizontalCount += 1
+                            else:
+                                break
                     self.triggers.append(Box(LevelMap.Tiles[value], 
                                                 Vector2(x,y) * self.gridsize + Vector2(0,self.gridsize/2), 
-                                                Vector2(self.gridsize, self.gridsize/2)))
+                                                Vector2(self.gridsize * horizontalCount, self.gridsize/2)))
                 elif value == 5: # JumpPad
                     self.triggers.append(Box(LevelMap.Tiles[value], 
                                                 Vector2(x,y) * self.gridsize + Vector2(0,8), 
