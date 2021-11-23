@@ -1,4 +1,4 @@
-from pygame.constants import K_DOWN, K_F1, K_LEFT, K_RIGHT, K_UP
+from pygame.constants import K_DOWN, K_F1, K_F2, K_LEFT, K_RIGHT, K_UP
 from Engine.BaseState import BaseState
 from Engine.LevelMap import LevelMap
 from Engine.DebugLog import Debug
@@ -63,7 +63,7 @@ class State_Level(BaseState):
         self.isOnGround = False
 
         self.levelMap = LevelMap(64) # GridSize = 64x64
-        self.numOfLevels = 2
+        self.numOfLevels = 6
         self.currentLevel = 1
             
     def __drawMap(self):
@@ -77,8 +77,8 @@ class State_Level(BaseState):
                     position = Vector2(x * 64, y * 64)
                     if self.camera.isWithinView(position):
                         self.AddDrawSprite(Tiles[value], position - self.camera.position)
-        # Draw level what
-        self.AddDrawFont(f'Level {int(self.currentLevel/3) + 1} - { self.currentLevel%3 }', 
+        # Draw level ?-?
+        self.AddDrawFont(f'Level {int((self.currentLevel-1)/3)} - { (self.currentLevel-1)%3 + 1 }', 
                         self.levelMap.GetStartPoint_ScreenPos() - Vector2(0, 64) - self.camera.position, 
                         MYCOLOR.WHITE, 50)
 
@@ -97,7 +97,6 @@ class State_Level(BaseState):
         self.AddDrawUIFont(f'x{self.player.lives}', Vector2(55, 10), MYCOLOR.WHITE, 30)
         self.AddDrawUISprite("Ring", Vector2(10,43), 0, Vector2(0.6, 0.6))
         self.AddDrawUIFont(f'x{self.player.coins}', Vector2(55, 50), MYCOLOR.WHITE, 30)
-
 
     def __handleCollision(self):
         player_collider = self.player.colliderData()
@@ -176,6 +175,12 @@ class State_Level(BaseState):
             if env.type == pygame.KEYDOWN:            
                 if env.key == K_F1:
                     self.showDebug = not self.showDebug
+                elif env.key == K_F2:
+                    if self.currentLevel != self.numOfLevels:
+                        self.__LoadLevel(self.currentLevel + 1)
+                    else:
+                        self.sm.ChangeState("Main Menu")
+                        self.currentLevel = 1
                 if env.key == K_UP and self.isOnGround:
                     self.isOnGround = False
                     self.player.velocity.y = -7.5
@@ -193,7 +198,7 @@ class State_Level(BaseState):
                 self.player.velocity.x += 1
 
     def __updateCamera(self):
-        self.camera.position = self.player.position - Vector2(400, 400)
+        self.camera.position = self.player.position - Vector2(400, 250)
         self.camera.clampToBoundary()
 
     def __LoadLevel(self, level):
