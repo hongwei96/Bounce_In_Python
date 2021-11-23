@@ -54,7 +54,7 @@ class State_MainMenu(BaseState):
                 value = map[y * dimension[0] + x]
                 if value != 0:
                     position = Vector2(x * 64, y * 64)
-                    self.AddDrawCall(Tiles[value], position)
+                    self.AddDrawSprite(Tiles[value], position)
 
     def __handleKeyInput(self):
         # Trigger once
@@ -78,16 +78,16 @@ class State_MainMenu(BaseState):
 
     def __drawUIs(self):
         if not self.showCredits:
-            self.AddDrawCall("Title", Vector2(0, 0))
-            self.AddDrawUIText("Play", Vector2(32, 200), self.options.GetColor(0), self.options.GetSize(0))
-            self.AddDrawUIText("Credits", Vector2(32, 250), self.options.GetColor(1), self.options.GetSize(1))
-            self.AddDrawUIText("Quit", Vector2(32, 300), self.options.GetColor(2), self.options.GetSize(2))
+            self.AddDrawSprite("Title", Vector2(0, 0))
+            self.AddDrawUIFont("Play", Vector2(32, 200), self.options.GetColor(0), self.options.GetSize(0))
+            self.AddDrawUIFont("Credits", Vector2(32, 250), self.options.GetColor(1), self.options.GetSize(1))
+            self.AddDrawUIFont("Quit", Vector2(32, 300), self.options.GetColor(2), self.options.GetSize(2))
         else:
-            self.AddDrawUIText("Credits", Vector2(32, 64), MYCOLOR.RED, 72)
-            self.AddDrawUIText("Game made in Python by Chua Hong Wei", Vector2(32, 130), MYCOLOR.WHITE, 30)
-            self.AddDrawUIText("BGM done by Chua Hong Zhi", Vector2(32, 160), MYCOLOR.WHITE, 30)
-            self.AddDrawUIText("SFX generated at https://sfxr.me/", Vector2(32, 190), MYCOLOR.WHITE, 30)
-            self.AddDrawUIText("[Enter] Return to main menu", Vector2(32, 400), MYCOLOR.RED, 30)
+            self.AddDrawUIFont("Credits", Vector2(32, 64), MYCOLOR.RED, 72)
+            self.AddDrawUIFont("Game made in Python by Chua Hong Wei", Vector2(32, 130), MYCOLOR.WHITE, 30)
+            self.AddDrawUIFont("BGM done by Chua Hong Zhi", Vector2(32, 160), MYCOLOR.WHITE, 30)
+            self.AddDrawUIFont("SFX generated at https://sfxr.me/", Vector2(32, 190), MYCOLOR.WHITE, 30)
+            self.AddDrawUIFont("[Enter] Return to main menu", Vector2(32, 400), MYCOLOR.RED, 30)
             
 
     def Load(self):

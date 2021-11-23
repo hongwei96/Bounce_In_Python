@@ -76,7 +76,11 @@ class State_Level(BaseState):
                 if value != 0:
                     position = Vector2(x * 64, y * 64)
                     if self.camera.isWithinView(position):
-                        self.AddDrawCall(Tiles[value], position - self.camera.position)
+                        self.AddDrawSprite(Tiles[value], position - self.camera.position)
+        # Draw level what
+        self.AddDrawFont(f'Level {int(self.currentLevel/3) + 1} - { self.currentLevel%3 }', 
+                        self.levelMap.GetStartPoint_ScreenPos() - Vector2(0, 64) - self.camera.position, 
+                        MYCOLOR.WHITE, 50)
 
     def __drawColliders(self):
         for col in self.levelMap.colliders:
@@ -88,11 +92,11 @@ class State_Level(BaseState):
         self.AddDrawDebugCircleCall(player_collider[0] - self.camera.position, player_collider[1], MYCOLOR.GREEN)
 
     def __drawUI(self):
-        self.AddDrawUITex("Black", Vector2(), 0, Vector2(2, 1.3))
-        self.AddDrawUITex("Ball", Vector2(10,3), 0, Vector2(0.6, 0.6))
-        self.AddDrawUIText(f'x{self.player.lives}', Vector2(55, 10), MYCOLOR.WHITE, 30)
-        self.AddDrawUITex("Ring", Vector2(10,43), 0, Vector2(0.6, 0.6))
-        self.AddDrawUIText(f'x{self.player.coins}', Vector2(55, 50), MYCOLOR.WHITE, 30)
+        self.AddDrawUISprite("Black", Vector2(), 0, Vector2(2, 1.3))
+        self.AddDrawUISprite("Ball", Vector2(10,3), 0, Vector2(0.6, 0.6))
+        self.AddDrawUIFont(f'x{self.player.lives}', Vector2(55, 10), MYCOLOR.WHITE, 30)
+        self.AddDrawUISprite("Ring", Vector2(10,43), 0, Vector2(0.6, 0.6))
+        self.AddDrawUIFont(f'x{self.player.coins}', Vector2(55, 50), MYCOLOR.WHITE, 30)
 
 
     def __handleCollision(self):
@@ -218,6 +222,9 @@ class State_Level(BaseState):
         self.rm.GetAudioClip("inGameBGM").source.stop()
 
     def Update(self, dt):
+        if dt > 2/60:
+            return
+
         self.__handleKeyInput()
         self.__handlePhysics(dt)
         self.__handleCollision()
@@ -225,7 +232,7 @@ class State_Level(BaseState):
 
         self.__drawMap()
         self.__updateCamera()
-        self.AddDrawCall("Ball", self.player.position - self.camera.position)
+        self.AddDrawSprite("Ball", self.player.position - self.camera.position)
         self.__drawUI()
 
         if self.showDebug:
