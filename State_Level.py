@@ -183,7 +183,7 @@ class State_Level(BaseState):
                         self.currentLevel = 1
                 if env.key == K_UP and self.isOnGround:
                     self.isOnGround = False
-                    self.player.velocity.y = -7.5
+                    self.player.velocity.y = -7.6
                     self.rm.GetAudioClip("Jump").Play()
         #elif keypress[K_DOWN]:
         #    self.playerVel.y = 5
@@ -192,13 +192,13 @@ class State_Level(BaseState):
         keypress = pygame.key.get_pressed()
         if keypress[K_LEFT]:
             if self.player.velocity.x > -3:
-                self.player.velocity.x -= 1
+                self.player.velocity.x -= 1.1
         elif keypress[K_RIGHT]:
             if self.player.velocity.x < 3:
-                self.player.velocity.x += 1
+                self.player.velocity.x += 1.1
 
     def __updateCamera(self):
-        self.camera.position = self.player.position - Vector2(400, 250)
+        self.camera.position = self.player.position - Vector2(400, 300)
         self.camera.clampToBoundary()
 
     def __LoadLevel(self, level):
