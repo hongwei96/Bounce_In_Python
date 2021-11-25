@@ -7,6 +7,7 @@ class StateManager:
         self.newState = "None"
         self.currentState = "None"
         self.states = {}
+        self.variables = {}
 
     def isQuit(self):
         return self.newState == "None"

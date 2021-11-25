@@ -70,6 +70,7 @@ class State_MainMenu(BaseState):
                 elif env.key == K_RETURN:
                     if self.options.currentVal == 0:
                         self.sm.ChangeState("Levels")
+                        self.sm.variables["TimeTaken"] = 0
                     elif self.options.currentVal == 1:
                         self.showCredits = not self.showCredits
                     elif self.options.currentVal == 2:

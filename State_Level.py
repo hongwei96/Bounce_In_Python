@@ -43,7 +43,7 @@ class Player:
         self.lives -= 1
 
     def isDead(self):
-        return self.lives <= 0
+        return self.lives < 0
 
     def colliderData(self):
         return (self.position + Vector2(32,32), self.radius)
@@ -138,6 +138,8 @@ class State_Level(BaseState):
                     elif trigger.name == "Spike":
                         self.player.Died(self.levelMap.GetRespawnPoint_ScreenPos())
                         self.rm.GetAudioClip("Hit").Play()
+                        if self.player.isDead():
+                            self.__GameOver()
                         break
                     elif trigger.name == "JumpPad":
                         self.player.velocity.y = -20
@@ -147,8 +149,7 @@ class State_Level(BaseState):
                         if self.currentLevel != self.numOfLevels:
                             self.__LoadLevel(self.currentLevel + 1)
                         else:
-                            self.sm.ChangeState("Main Menu")
-                            self.currentLevel = 1
+                            self.__GameOver()
                         break
 
     def __handlePhysics(self, dt: float):
@@ -179,8 +180,7 @@ class State_Level(BaseState):
                     if self.currentLevel != self.numOfLevels:
                         self.__LoadLevel(self.currentLevel + 1)
                     else:
-                        self.sm.ChangeState("Main Menu")
-                        self.currentLevel = 1
+                        self.__GameOver()
                 if env.key == K_UP and self.isOnGround:
                     self.isOnGround = False
                     self.player.velocity.y = -7.6
@@ -213,8 +213,17 @@ class State_Level(BaseState):
 
     def __ResetStats(self):
         self.player.coins = 0
-        self.player.lives = 3
+        self.player.lives = 5
         self.player.velocity.SetZero()
+
+    def __GameOver(self):
+        self.sm.ChangeState("Game Over")
+        self.currentLevel = 1
+        self.sm.variables["Lives"] = self.player.lives
+        self.sm.variables["Coins"] = self.player.coins
+        self.sm.variables["CurrentLevel"] = self.currentLevel
+        self.sm.variables["NumOfLevels"] = self.numOfLevels
+
 
     def Load(self):
         super().Load()
@@ -227,6 +236,7 @@ class State_Level(BaseState):
         self.rm.GetAudioClip("inGameBGM").source.stop()
 
     def Update(self, dt):
+        self.sm.variables["TimeTaken"] += dt
         if dt > 2/60:
             return
 

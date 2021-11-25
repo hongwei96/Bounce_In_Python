@@ -4,6 +4,7 @@ from Engine.ResourceManager import ResourceManager
 from Engine.Resources import Texture2D, Audio
 from State_Level import State_Level
 from State_MainMenu import State_MainMenu
+from State_GameOver import State_GameOver
 
 # Global Constants
 FPS = 60
@@ -55,6 +56,7 @@ def InitializeResources():
 def InitializeStates():
     sm.AddState(State_Level)
     sm.AddState(State_MainMenu)
+    sm.AddState(State_GameOver)
     sm.ChangeState(State_MainMenu.statename)
 
 def GetDeltaTime(getTicksLastFrame = [0]):
