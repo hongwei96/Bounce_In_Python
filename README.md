@@ -9,7 +9,11 @@ pip install -r requirements
 ```
 python main.py
 ```
-### How to play
+
+### Run Executable
+[Download](https://github.com/MrHunte96/Bounce_In_Python/raw/main/BounceExecutable.zip)
+
+# How to play
 ```
 Left/Right Arrow key : Movement
 Up Arrow key         : Jump
