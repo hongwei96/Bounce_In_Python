@@ -78,7 +78,7 @@ class State_Level(BaseState):
                     if self.camera.isWithinView(position):
                         self.AddDrawSprite(Tiles[value], position - self.camera.position)
         # Draw level ?-?
-        self.AddDrawFont(f'Level {int((self.currentLevel-1)/3)} - { (self.currentLevel-1)%3 + 1 }', 
+        self.AddDrawFont(f'Level {int((self.currentLevel-1)/3) + 1} - { (self.currentLevel-1)%3 + 1 }', 
                         self.levelMap.GetStartPoint_ScreenPos() - Vector2(0, 64) - self.camera.position, 
                         MYCOLOR.WHITE, 50)
 
@@ -97,6 +97,10 @@ class State_Level(BaseState):
         self.AddDrawUIFont(f'x{self.player.lives}', Vector2(55, 10), MYCOLOR.WHITE, 30)
         self.AddDrawUISprite("Ring", Vector2(10,43), 0, Vector2(0.6, 0.6))
         self.AddDrawUIFont(f'x{self.player.coins}', Vector2(55, 50), MYCOLOR.WHITE, 30)
+
+        
+        self.AddDrawUISprite("Black", Vector2(850, 0), 0, Vector2(2, 0.4))
+        self.AddDrawUIFont(f'{int(self.sm.variables["TimeTaken"] / 60)}m {int(self.sm.variables["TimeTaken"] % 60)}s', Vector2(860, 4), MYCOLOR.WHITE, 25)
 
     def __handleCollision(self):
         player_collider = self.player.colliderData()
