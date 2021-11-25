@@ -143,6 +143,7 @@ class State_Level(BaseState):
                         break
                     elif trigger.name == "JumpPad":
                         self.player.velocity.y = -20
+                        self.rm.GetAudioClip("JumpPad").Play()
                         break
                     elif trigger.name == "Endpoint":
                         trigger.active = False
@@ -223,7 +224,6 @@ class State_Level(BaseState):
         self.sm.variables["Coins"] = self.player.coins
         self.sm.variables["CurrentLevel"] = self.currentLevel
         self.sm.variables["NumOfLevels"] = self.numOfLevels
-
 
     def Load(self):
         super().Load()
