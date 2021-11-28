@@ -11,7 +11,7 @@ python main.py
 ```
 
 ### Run Executable
-[Download](https://github.com/MrHunte96/Bounce_In_Python/raw/main/BounceExecutable.zip)
+[Download](https://github.com/MrHunte96/Bounce_In_Python/raw/main/BounceGame.zip)
 
 # How to play
 ```
