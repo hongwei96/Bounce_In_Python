@@ -223,11 +223,11 @@ class State_Level(BaseState):
 
     def __GameOver(self):
         self.sm.ChangeState("Game Over")
-        self.currentLevel = 1
         self.sm.variables["Lives"] = self.player.lives
         self.sm.variables["Coins"] = self.player.coins
         self.sm.variables["CurrentLevel"] = self.currentLevel
         self.sm.variables["NumOfLevels"] = self.numOfLevels
+        self.currentLevel = 1
 
     def Load(self):
         super().Load()
